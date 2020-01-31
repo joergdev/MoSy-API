@@ -1,13 +1,24 @@
 package com.github.joergdev.mosy.api.model;
 
 import java.time.LocalDateTime;
+import java.util.Date;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.github.joergdev.mosy.api.model.core.AbstractModel;
+import com.github.joergdev.mosy.shared.Utils;
 
-public class MockData extends AbstractModel
+public class MockData extends AbstractModel implements Cloneable
 {
   private Integer mockDataId;
   private String title;
-  private LocalDateTime created;
+
+  /**
+   * Date of creation.
+   * 
+   * Cause of problems with json parsing as LocalDateTime "created" is instanceof Date.
+   * For handling as LocalDateTime though there exists a separate getter/setter.
+   */
+  private Date created;
+
   private Boolean active;
   private Integer countCalls;
 
@@ -38,14 +49,31 @@ public class MockData extends AbstractModel
     this.title = title;
   }
 
-  public LocalDateTime getCreated()
+  public Date getCreated()
   {
     return created;
   }
 
-  public void setCreated(LocalDateTime created)
+  public void setCreated(Date created)
   {
     this.created = created;
+  }
+
+  @JsonIgnore
+  public String getCreatedAsString()
+  {
+    return Utils.localDateTimeToString(getCreatedAsLdt());
+  }
+
+  @JsonIgnore
+  public LocalDateTime getCreatedAsLdt()
+  {
+    return Utils.dateToLocalDateTime(created);
+  }
+
+  public void setCreatedAsLdt(LocalDateTime created)
+  {
+    this.created = Utils.localDateTimeToDate(created);
   }
 
   public Boolean getActive()
@@ -106,5 +134,32 @@ public class MockData extends AbstractModel
   public void setMockSession(MockSession mockSession)
   {
     this.mockSession = mockSession;
+  }
+
+  @JsonIgnore
+  public Integer getMockSessionID()
+  {
+    return mockSession == null
+        ? null
+        : mockSession.getMockSessionID();
+  }
+
+  public MockData clone()
+  {
+    try
+    {
+      MockData clone = (MockData) super.clone();
+
+      if (mockSession != null)
+      {
+        clone.mockSession = mockSession.clone();
+      }
+
+      return clone;
+    }
+    catch (CloneNotSupportedException ex)
+    {
+      throw new IllegalStateException(ex);
+    }
   }
 }

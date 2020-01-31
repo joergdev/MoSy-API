@@ -1,9 +1,10 @@
 package com.github.joergdev.mosy.api.model;
 
+import java.util.ArrayList;
 import java.util.List;
 import com.github.joergdev.mosy.api.model.core.AbstractModel;
 
-public class Interface extends AbstractModel
+public class Interface extends AbstractModel implements Cloneable
 {
   private Integer interfaceId;
   private String name;
@@ -92,6 +93,11 @@ public class Interface extends AbstractModel
 
   public List<InterfaceMethod> getMethods()
   {
+    if (methods == null)
+    {
+      methods = new ArrayList<>();
+    }
+
     return methods;
   }
 
@@ -118,5 +124,42 @@ public class Interface extends AbstractModel
   public void setServicePath(String servicePath)
   {
     this.servicePath = servicePath;
+  }
+
+  public InterfaceMethod getMethodByName(String name)
+  {
+    if (name != null)
+    {
+      return methods.stream().filter(m -> name.equals(m.getName())).findAny().orElse(null);
+    }
+
+    return null;
+  }
+
+  public Interface clone()
+  {
+    try
+    {
+      Interface clone = (Interface) super.clone();
+
+      if (methods != null)
+      {
+        clone.methods = new ArrayList<>();
+
+        for (InterfaceMethod method : methods)
+        {
+          method = method.clone();
+          method.setMockInterface(clone);
+
+          clone.methods.add(method);
+        }
+      }
+
+      return clone;
+    }
+    catch (CloneNotSupportedException ex)
+    {
+      throw new IllegalStateException(ex);
+    }
   }
 }

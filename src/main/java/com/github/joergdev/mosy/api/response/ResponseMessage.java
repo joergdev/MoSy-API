@@ -9,50 +9,24 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "ResponseMessage", propOrder = {"level", "code", "message", "additionalInfos"})
+@XmlType(name = "ResponseMessage", propOrder = {"responseCode", "additionalInfos"})
 public class ResponseMessage
 {
-  @XmlElement(name = "level")
-  private ResponseMessageLevel level;
+  public ResponseMessage()
+  {
 
-  @XmlElement(name = "code")
-  private Integer code;
+  }
 
-  @XmlElement(name = "message")
-  private String message;
+  public ResponseMessage(ResponseCode responseCode)
+  {
+    this.responseCode = responseCode;
+  }
+
+  @XmlElement(name = "responseCode")
+  private ResponseCode responseCode;
 
   @XmlElement(name = "additionalInfos")
   private List<String> additionalInfos = new ArrayList<>();
-
-  public ResponseMessageLevel getLevel()
-  {
-    return level;
-  }
-
-  public void setLevel(ResponseMessageLevel level)
-  {
-    this.level = level;
-  }
-
-  public Integer getCode()
-  {
-    return code;
-  }
-
-  public void setCode(Integer code)
-  {
-    this.code = code;
-  }
-
-  public String getMessage()
-  {
-    return message;
-  }
-
-  public void setMessage(String message)
-  {
-    this.message = message;
-  }
 
   public List<String> getAdditionalInfos()
   {
@@ -76,12 +50,19 @@ public class ResponseMessage
     return cln;
   }
 
+  public ResponseCode getResponseCode()
+  {
+    return responseCode;
+  }
+
+  public void setResponseCode(ResponseCode responseCode)
+  {
+    this.responseCode = responseCode;
+  }
+
   public ResponseMessage clone()
   {
-    ResponseMessage cln = new ResponseMessage();
-    cln.code = code;
-    cln.level = level;
-    cln.message = message;
+    ResponseMessage cln = new ResponseMessage(responseCode);
     cln.additionalInfos.addAll(additionalInfos);
 
     return cln;
@@ -91,9 +72,9 @@ public class ResponseMessage
   {
     StringBuilder bui = new StringBuilder();
 
-    if (message != null)
+    if (responseCode != null)
     {
-      bui.append(message);
+      bui.append(responseCode.message);
     }
 
     if (!additionalInfos.isEmpty())
@@ -122,19 +103,9 @@ public class ResponseMessage
   {
     StringBuilder bui = new StringBuilder();
 
-    if (level != null)
+    if (responseCode != null)
     {
-      bui.append("[").append(level).append("]");
-    }
-
-    if (code != null)
-    {
-      if (bui.length() > 0)
-      {
-        bui.append(" - ");
-      }
-
-      bui.append(code);
+      bui.append("[").append(responseCode.level).append("] - ").append(responseCode.code);
     }
 
     String fullMsg = getFullMessage();

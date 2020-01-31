@@ -16,12 +16,12 @@ public class SaveResponse extends AbstractResponse
   @XmlElement(name = "interface")
   private Interface _interface;
 
-  public Interface get_interface()
+  public Interface getInterface()
   {
     return _interface;
   }
 
-  public void set_interface(Interface _interface)
+  public void setInterface(Interface _interface)
   {
     this._interface = _interface;
   }
