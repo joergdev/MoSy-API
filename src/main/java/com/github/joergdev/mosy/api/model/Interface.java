@@ -3,6 +3,7 @@ package com.github.joergdev.mosy.api.model;
 import java.util.ArrayList;
 import java.util.List;
 import com.github.joergdev.mosy.api.model.core.AbstractModel;
+import com.github.joergdev.mosy.shared.Utils;
 
 public class Interface extends AbstractModel implements Cloneable
 {
@@ -161,5 +162,68 @@ public class Interface extends AbstractModel implements Cloneable
     {
       throw new IllegalStateException(ex);
     }
+  }
+
+  @Override
+  public String toString()
+  {
+    StringBuilder bui = new StringBuilder(22);
+
+    if (interfaceId != null)
+    {
+      bui.append("[id:").append(interfaceId).append("]");
+    }
+
+    if (!Utils.isEmpty(name))
+    {
+      if (bui.length() > 0)
+      {
+        bui.append(" - ");
+      }
+
+      bui.append("[name:").append(name).append("]");
+    }
+
+    return bui.toString();
+  }
+
+  @Override
+  public int hashCode()
+  {
+    if (interfaceId != null)
+    {
+      return interfaceId;
+    }
+    else if (!Utils.isEmpty(name))
+    {
+      return name.hashCode();
+    }
+    else
+    {
+      return super.hashCode();
+    }
+  }
+
+  @Override
+  public boolean equals(Object obj)
+  {
+    if (obj instanceof Interface == false)
+    {
+      return false;
+    }
+
+    if (this == obj)
+    {
+      return true;
+    }
+
+    Interface other = (Interface) obj;
+
+    if (interfaceId != null && other.interfaceId != null)
+    {
+      return interfaceId.equals(other.interfaceId);
+    }
+
+    return Utils.isEqual(name, other.name);
   }
 }

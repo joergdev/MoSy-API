@@ -3,6 +3,7 @@ package com.github.joergdev.mosy.api.model;
 import java.util.ArrayList;
 import java.util.List;
 import com.github.joergdev.mosy.api.model.core.AbstractModel;
+import com.github.joergdev.mosy.shared.Utils;
 
 public class InterfaceMethod extends AbstractModel implements Cloneable
 {
@@ -189,5 +190,82 @@ public class InterfaceMethod extends AbstractModel implements Cloneable
     }
 
     return null;
+  }
+
+  @Override
+  public String toString()
+  {
+    StringBuilder bui = new StringBuilder(22);
+
+    if (interfaceMethodId != null)
+    {
+      bui.append("[id:").append(interfaceMethodId).append("]");
+    }
+
+    if (!Utils.isEmpty(name))
+    {
+      if (bui.length() > 0)
+      {
+        bui.append(" - ");
+      }
+
+      bui.append("[name:").append(name).append("]");
+    }
+
+    return bui.toString();
+  }
+
+  @Override
+  public int hashCode()
+  {
+    int hash = 0;
+
+    if (mockInterface != null)
+    {
+      hash = mockInterface.hashCode();
+    }
+
+    if (interfaceMethodId != null)
+    {
+      hash += interfaceMethodId;
+    }
+    else if (!Utils.isEmpty(name))
+    {
+      hash += name.hashCode();
+    }
+    else
+    {
+      hash += super.hashCode();
+    }
+
+    return hash;
+  }
+
+  @Override
+  public boolean equals(Object obj)
+  {
+    if (obj instanceof InterfaceMethod == false)
+    {
+      return false;
+    }
+
+    if (this == obj)
+    {
+      return true;
+    }
+
+    InterfaceMethod other = (InterfaceMethod) obj;
+
+    if (mockInterface != null && other.mockInterface != null && !mockInterface.equals(other.mockInterface))
+    {
+      return false;
+    }
+
+    if (interfaceMethodId != null && other.interfaceMethodId != null)
+    {
+      return interfaceMethodId.equals(other.interfaceMethodId);
+    }
+
+    return Utils.isEqual(name, other.name);
   }
 }
