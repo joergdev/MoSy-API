@@ -167,24 +167,9 @@ public class Interface extends AbstractModel implements Cloneable
   @Override
   public String toString()
   {
-    StringBuilder bui = new StringBuilder(22);
-
-    if (interfaceId != null)
-    {
-      bui.append("[id:").append(interfaceId).append("]");
-    }
-
-    if (!Utils.isEmpty(name))
-    {
-      if (bui.length() > 0)
-      {
-        bui.append(" - ");
-      }
-
-      bui.append("[name:").append(name).append("]");
-    }
-
-    return bui.toString();
+    return name == null
+        ? super.toString()
+        : name;
   }
 
   @Override

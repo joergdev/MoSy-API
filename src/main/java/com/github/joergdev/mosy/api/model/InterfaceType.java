@@ -11,13 +11,13 @@ public enum InterfaceType
     CUSTOM_PLAIN(5, false, false);
 
   public final Integer id;
-  public final boolean routingPossible;
+  public final boolean directRoutingPossible;
   public final boolean servicePathSettable;
 
-  private InterfaceType(Integer id, boolean routingPossible, boolean servicePathSettable)
+  private InterfaceType(Integer id, boolean directRoutingPossible, boolean servicePathSettable)
   {
     this.id = id;
-    this.routingPossible = routingPossible;
+    this.directRoutingPossible = directRoutingPossible;
     this.servicePathSettable = servicePathSettable;
   }
 
