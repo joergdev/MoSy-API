@@ -12,8 +12,8 @@ public class Interface extends AbstractModel implements Cloneable
   private InterfaceType type;
   private String servicePath;
 
-  private Boolean mockDisabledOnStartup;
-  private Boolean mockDisabled;
+  private Boolean mockActiveOnStartup;
+  private Boolean mockActive;
 
   private String routingUrl;
   private Boolean routingOnNoMockData;
@@ -50,26 +50,6 @@ public class Interface extends AbstractModel implements Cloneable
   public void setType(InterfaceType type)
   {
     this.type = type;
-  }
-
-  public Boolean getMockDisabledOnStartup()
-  {
-    return mockDisabledOnStartup;
-  }
-
-  public void setMockDisabledOnStartup(Boolean mockDisabledOnStartup)
-  {
-    this.mockDisabledOnStartup = mockDisabledOnStartup;
-  }
-
-  public Boolean getMockDisabled()
-  {
-    return mockDisabled;
-  }
-
-  public void setMockDisabled(Boolean mockDisabled)
-  {
-    this.mockDisabled = mockDisabled;
   }
 
   public String getRoutingUrl()
@@ -135,6 +115,26 @@ public class Interface extends AbstractModel implements Cloneable
     }
 
     return null;
+  }
+
+  public Boolean getMockActiveOnStartup()
+  {
+    return mockActiveOnStartup;
+  }
+
+  public void setMockActiveOnStartup(Boolean mockActiveOnStartup)
+  {
+    this.mockActiveOnStartup = mockActiveOnStartup;
+  }
+
+  public Boolean getMockActive()
+  {
+    return mockActive;
+  }
+
+  public void setMockActive(Boolean mockActive)
+  {
+    this.mockActive = mockActive;
   }
 
   public Interface clone()

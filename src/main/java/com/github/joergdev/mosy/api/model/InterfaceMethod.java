@@ -12,8 +12,8 @@ public class InterfaceMethod extends AbstractModel implements Cloneable
   private String servicePath;
 
   private Boolean routingOnNoMockData;
-  private Boolean mockDisabledOnStartup;
-  private Boolean mockDisabled;
+  private Boolean mockActiveOnStartup;
+  private Boolean mockActive;
 
   private Integer countCalls;
 
@@ -53,26 +53,6 @@ public class InterfaceMethod extends AbstractModel implements Cloneable
   public void setRoutingOnNoMockData(Boolean routingOnNoMockData)
   {
     this.routingOnNoMockData = routingOnNoMockData;
-  }
-
-  public Boolean getMockDisabledOnStartup()
-  {
-    return mockDisabledOnStartup;
-  }
-
-  public void setMockDisabledOnStartup(Boolean mockDisabledOnStartup)
-  {
-    this.mockDisabledOnStartup = mockDisabledOnStartup;
-  }
-
-  public Boolean getMockDisabled()
-  {
-    return mockDisabled;
-  }
-
-  public void setMockDisabled(Boolean mockDisabled)
-  {
-    this.mockDisabled = mockDisabled;
   }
 
   public Integer getCountCalls()
@@ -190,6 +170,26 @@ public class InterfaceMethod extends AbstractModel implements Cloneable
     }
 
     return null;
+  }
+
+  public Boolean getMockActiveOnStartup()
+  {
+    return mockActiveOnStartup;
+  }
+
+  public void setMockActiveOnStartup(Boolean mockActiveOnStartup)
+  {
+    this.mockActiveOnStartup = mockActiveOnStartup;
+  }
+
+  public Boolean getMockActive()
+  {
+    return mockActive;
+  }
+
+  public void setMockActive(Boolean mockActive)
+  {
+    this.mockActive = mockActive;
   }
 
   @Override
