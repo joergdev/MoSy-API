@@ -107,4 +107,14 @@ public class Record extends AbstractModel
   {
     this.response = response;
   }
+
+  public void formatRequestResponse(Integer interfaceTypeId)
+  {
+    // XML
+    if (InterfaceType.SOAP.id.equals(interfaceTypeId) || InterfaceType.CUSTOM_XML.id.equals(interfaceTypeId))
+    {
+      requestData = Utils.formatXml(requestData);
+      response = Utils.formatXml(response);
+    }
+  }
 }

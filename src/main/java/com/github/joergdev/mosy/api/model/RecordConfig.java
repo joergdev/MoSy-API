@@ -1,6 +1,7 @@
 package com.github.joergdev.mosy.api.model;
 
 import com.github.joergdev.mosy.api.model.core.AbstractModel;
+import com.github.joergdev.mosy.shared.Utils;
 
 public class RecordConfig extends AbstractModel implements Cloneable
 {
@@ -84,6 +85,15 @@ public class RecordConfig extends AbstractModel implements Cloneable
     catch (CloneNotSupportedException ex)
     {
       throw new IllegalStateException(ex);
+    }
+  }
+
+  public void formatRequest(Integer interfaceTypeId)
+  {
+    // XML
+    if (InterfaceType.SOAP.id.equals(interfaceTypeId) || InterfaceType.CUSTOM_XML.id.equals(interfaceTypeId))
+    {
+      requestData = Utils.formatXml(requestData);
     }
   }
 }

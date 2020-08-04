@@ -162,4 +162,14 @@ public class MockData extends AbstractModel implements Cloneable
       throw new IllegalStateException(ex);
     }
   }
+
+  public void formatRequestResponse(Integer interfaceTypeId)
+  {
+    // XML
+    if (InterfaceType.SOAP.id.equals(interfaceTypeId) || InterfaceType.CUSTOM_XML.id.equals(interfaceTypeId))
+    {
+      request = Utils.formatXml(request);
+      response = Utils.formatXml(response);
+    }
+  }
 }
