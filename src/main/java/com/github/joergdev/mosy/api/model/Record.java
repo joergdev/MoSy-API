@@ -1,13 +1,16 @@
 package com.github.joergdev.mosy.api.model;
 
 import java.time.LocalDateTime;
+import java.util.Date;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.github.joergdev.mosy.api.model.core.AbstractModel;
+import com.github.joergdev.mosy.shared.Utils;
 
 public class Record extends AbstractModel
 {
   private Integer recordId;
   private InterfaceMethod interfaceMethod;
-  private LocalDateTime created;
+  private Date created;
 
   private String requestData;
   private String response;
@@ -32,14 +35,57 @@ public class Record extends AbstractModel
     this.interfaceMethod = interfaceMethod;
   }
 
-  public LocalDateTime getCreated()
+  @JsonIgnore
+  public String getInterfaceName()
+  {
+    if (interfaceMethod != null)
+    {
+      Interface apiInterface = interfaceMethod.getMockInterface();
+      if (apiInterface != null)
+      {
+        return apiInterface.getName();
+      }
+    }
+
+    return null;
+  }
+
+  @JsonIgnore
+  public String getMethodName()
+  {
+    if (interfaceMethod != null)
+    {
+      return interfaceMethod.getName();
+    }
+
+    return null;
+  }
+
+  public Date getCreated()
   {
     return created;
   }
 
-  public void setCreated(LocalDateTime created)
+  public void setCreated(Date created)
   {
     this.created = created;
+  }
+
+  @JsonIgnore
+  public String getCreatedAsString()
+  {
+    return Utils.localDateTimeToString(getCreatedAsLdt());
+  }
+
+  @JsonIgnore
+  public LocalDateTime getCreatedAsLdt()
+  {
+    return Utils.dateToLocalDateTime(created);
+  }
+
+  public void setCreatedAsLdt(LocalDateTime created)
+  {
+    this.created = Utils.localDateTimeToDate(created);
   }
 
   public String getRequestData()
@@ -60,5 +106,15 @@ public class Record extends AbstractModel
   public void setResponse(String response)
   {
     this.response = response;
+  }
+
+  public void formatRequestResponse(Integer interfaceTypeId)
+  {
+    // XML
+    if (InterfaceType.SOAP.id.equals(interfaceTypeId) || InterfaceType.CUSTOM_XML.id.equals(interfaceTypeId))
+    {
+      requestData = Utils.formatXml(requestData);
+      response = Utils.formatXml(response);
+    }
   }
 }

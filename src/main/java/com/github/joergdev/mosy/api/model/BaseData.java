@@ -12,12 +12,12 @@ public class BaseData extends AbstractModel
   private Boolean routingOnNoMockData;
   private Integer ttlMockSession;
 
+  private Boolean record;
+
   private final List<Interface> interfaces = new ArrayList<>();
 
   private Integer countMockSessions;
   private Integer countRecords;
-
-  private Boolean record;
 
   public Boolean getMockActiveOnStartup()
   {

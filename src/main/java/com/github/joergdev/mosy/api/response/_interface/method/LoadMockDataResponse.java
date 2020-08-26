@@ -1,5 +1,7 @@
-package com.github.joergdev.mosy.api.response.mockdata;
+package com.github.joergdev.mosy.api.response._interface.method;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -10,19 +12,14 @@ import com.github.joergdev.mosy.api.response.AbstractResponse;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "SaveResponse", propOrder = {"stateOK", "messages", "mockData"})
-public class SaveResponse extends AbstractResponse
+@XmlType(name = "LoadMockDataResponse", propOrder = {"stateOK", "messages", "mockData"})
+public class LoadMockDataResponse extends AbstractResponse
 {
   @XmlElement(name = "mockData")
-  private MockData mockData;
+  private final List<MockData> mockData = new ArrayList<>();
 
-  public MockData getMockData()
+  public List<MockData> getMockData()
   {
     return mockData;
-  }
-
-  public void setMockData(MockData mockData)
-  {
-    this.mockData = mockData;
   }
 }

@@ -1,7 +1,9 @@
 package com.github.joergdev.mosy.api.response;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.stream.Collectors;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -30,5 +32,11 @@ public abstract class AbstractResponse
   public Collection<ResponseMessage> getMessages()
   {
     return messages;
+  }
+
+  public Collection<ResponseMessage> getMessagesForLevel(ResponseMessageLevel... level)
+  {
+    return messages.stream().filter(msg -> Arrays.asList(level).contains(msg.getResponseCode().level))
+        .collect(Collectors.toList());
   }
 }

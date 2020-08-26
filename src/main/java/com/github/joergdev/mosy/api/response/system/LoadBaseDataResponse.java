@@ -10,7 +10,7 @@ import com.github.joergdev.mosy.api.response.AbstractResponse;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "LoadBaseDataResponse", propOrder = {"stateOK", "messages", "baseData"})
+@XmlType(name = "LoadBaseDataResponse", propOrder = {"baseData"})
 public class LoadBaseDataResponse extends AbstractResponse
 {
   @XmlElement(name = "baseData")

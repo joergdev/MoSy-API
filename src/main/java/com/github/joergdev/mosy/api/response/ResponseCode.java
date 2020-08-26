@@ -1,6 +1,6 @@
 package com.github.joergdev.mosy.api.response;
 
-public enum ResponseMessages
+public enum ResponseCode
 {
   // ERROR
   ACCESS_DENIED(1, "Access denied", ResponseMessageLevel.ERROR),
@@ -18,18 +18,21 @@ public enum ResponseMessages
     NO_DATA_CHANGED(10000, "No data changed", ResponseMessageLevel.INFO),
     OPERATION_FAILED_INFO(10001, "Operation failed", ResponseMessageLevel.INFO);
 
-  private ResponseMessages(Integer code, String message, ResponseMessageLevel level)
-  {
-    responseMsg = new ResponseMessage();
-    responseMsg.setCode(code);
-    responseMsg.setMessage(message);
-    responseMsg.setLevel(level);
-  }
+  public final Integer code;
+  public final String message;
+  public final ResponseMessageLevel level;
 
-  public final ResponseMessage responseMsg;
+  private ResponseCode(Integer code, String message, ResponseMessageLevel level)
+  {
+    this.code = code;
+    this.message = message;
+    this.level = level;
+  }
 
   public ResponseMessage withAddtitionalInfo(String addInfo)
   {
-    return responseMsg.withAddtitionalInfo(addInfo);
+    ResponseMessage rspm = new ResponseMessage(this);
+
+    return rspm.withAddtitionalInfo(addInfo);
   }
 }
