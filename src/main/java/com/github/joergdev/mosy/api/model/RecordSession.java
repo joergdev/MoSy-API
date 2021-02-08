@@ -6,19 +6,29 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.github.joergdev.mosy.api.model.core.AbstractModel;
 import com.github.joergdev.mosy.shared.Utils;
 
-public class MockSession extends AbstractModel implements Cloneable
+public class RecordSession extends AbstractModel implements Cloneable
 {
-  private Integer mockSessionID;
+  private Integer recordSessionID;
   private Date created;
 
-  public Integer getMockSessionID()
+  public RecordSession()
   {
-    return mockSessionID;
+
   }
 
-  public void setMockSessionID(Integer mockSessionID)
+  public RecordSession(Integer recordSessionID)
   {
-    this.mockSessionID = mockSessionID;
+    this.recordSessionID = recordSessionID;
+  }
+
+  public Integer getRecordSessionID()
+  {
+    return recordSessionID;
+  }
+
+  public void setRecordSessionID(Integer recordSessionID)
+  {
+    this.recordSessionID = recordSessionID;
   }
 
   public Date getCreated()
@@ -48,11 +58,11 @@ public class MockSession extends AbstractModel implements Cloneable
     this.created = Utils.localDateTimeToDate(created);
   }
 
-  public MockSession clone()
+  public RecordSession clone()
   {
     try
     {
-      MockSession clone = (MockSession) super.clone();
+      RecordSession clone = (RecordSession) super.clone();
 
       return clone;
     }
@@ -67,7 +77,7 @@ public class MockSession extends AbstractModel implements Cloneable
   {
     StringBuilder bui = new StringBuilder(22);
 
-    bui.append(mockSessionID);
+    bui.append(recordSessionID);
 
     if (created != null)
     {
@@ -80,15 +90,15 @@ public class MockSession extends AbstractModel implements Cloneable
   @Override
   public int hashCode()
   {
-    return mockSessionID == null
+    return recordSessionID == null
         ? super.hashCode()
-        : mockSessionID;
+        : recordSessionID;
   }
 
   @Override
   public boolean equals(Object obj)
   {
-    if (obj instanceof MockSession == false)
+    if (obj instanceof RecordSession == false)
     {
       return false;
     }
@@ -98,9 +108,9 @@ public class MockSession extends AbstractModel implements Cloneable
       return true;
     }
 
-    MockSession other = (MockSession) obj;
+    RecordSession other = (RecordSession) obj;
 
-    return Utils.isEqual(mockSessionID, other.mockSessionID)
+    return Utils.isEqual(recordSessionID, other.recordSessionID)
            && (created != null && other.created != null
                && Utils.isEqual(Utils.localDateTimeToString(getCreatedAsLdt()),
                    Utils.localDateTimeToString(other.getCreatedAsLdt())));

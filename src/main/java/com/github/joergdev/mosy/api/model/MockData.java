@@ -1,7 +1,9 @@
 package com.github.joergdev.mosy.api.model;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.github.joergdev.mosy.api.model.core.AbstractModel;
 import com.github.joergdev.mosy.shared.Utils;
@@ -19,7 +21,8 @@ public class MockData extends AbstractModel implements Cloneable
    */
   private Date created;
 
-  private Boolean active;
+  private boolean active;
+  private boolean common;
   private Integer countCalls;
 
   private InterfaceMethod interfaceMethod;
@@ -27,7 +30,10 @@ public class MockData extends AbstractModel implements Cloneable
   private String request;
   private String response;
 
-  private MockSession mockSession;
+  private Integer requestHash;
+  private Integer responseHash;
+
+  private List<MockProfile> mockProfiles = new ArrayList<>();
 
   public Integer getMockDataId()
   {
@@ -76,12 +82,12 @@ public class MockData extends AbstractModel implements Cloneable
     this.created = Utils.localDateTimeToDate(created);
   }
 
-  public Boolean getActive()
+  public boolean getActive()
   {
     return active;
   }
 
-  public void setActive(Boolean active)
+  public void setActive(boolean active)
   {
     this.active = active;
   }
@@ -126,22 +132,72 @@ public class MockData extends AbstractModel implements Cloneable
     this.response = response;
   }
 
-  public MockSession getMockSession()
-  {
-    return mockSession;
-  }
-
-  public void setMockSession(MockSession mockSession)
-  {
-    this.mockSession = mockSession;
-  }
-
   @JsonIgnore
-  public Integer getMockSessionID()
+  public String getMockProfileNames()
   {
-    return mockSession == null
-        ? null
-        : mockSession.getMockSessionID();
+    StringBuilder bui = new StringBuilder();
+
+    for (MockProfile mp : mockProfiles)
+    {
+      if (bui.length() > 0)
+      {
+        bui.append(", ");
+      }
+
+      bui.append(mp.getName());
+    }
+
+    return bui.toString();
+  }
+
+  public boolean getCommon()
+  {
+    return common;
+  }
+
+  public void setCommon(boolean common)
+  {
+    this.common = common;
+  }
+
+  /**
+   * @return the requestHash
+   */
+  public Integer getRequestHash()
+  {
+    return requestHash;
+  }
+
+  /**
+   * @param requestHash the requestHash to set
+   */
+  public void setRequestHash(Integer requestHash)
+  {
+    this.requestHash = requestHash;
+  }
+
+  /**
+   * @return the responseHash
+   */
+  public Integer getResponseHash()
+  {
+    return responseHash;
+  }
+
+  /**
+   * @param responseHash the responseHash to set
+   */
+  public void setResponseHash(Integer responseHash)
+  {
+    this.responseHash = responseHash;
+  }
+
+  /**
+   * @return the mockProfiles
+   */
+  public List<MockProfile> getMockProfiles()
+  {
+    return mockProfiles;
   }
 
   public MockData clone()
@@ -150,10 +206,8 @@ public class MockData extends AbstractModel implements Cloneable
     {
       MockData clone = (MockData) super.clone();
 
-      if (mockSession != null)
-      {
-        clone.mockSession = mockSession.clone();
-      }
+      clone.mockProfiles = new ArrayList<>();
+      mockProfiles.forEach(mp -> clone.mockProfiles.add(mp.clone()));
 
       return clone;
     }
@@ -171,5 +225,16 @@ public class MockData extends AbstractModel implements Cloneable
       request = Utils.formatXml(request);
       response = Utils.formatXml(response);
     }
+  }
+
+  public void setRequestResponseHash()
+  {
+    requestHash = request == null
+        ? null
+        : request.hashCode();
+
+    responseHash = response == null
+        ? null
+        : response.hashCode();
   }
 }

@@ -16,7 +16,8 @@ public enum ResponseCode
 
     // INFO
     NO_DATA_CHANGED(10000, "No data changed", ResponseMessageLevel.INFO),
-    OPERATION_FAILED_INFO(10001, "Operation failed", ResponseMessageLevel.INFO);
+    OPERATION_FAILED_INFO(10001, "Operation failed", ResponseMessageLevel.INFO),
+    DATA_SET(10001, "Data set", ResponseMessageLevel.INFO);
 
   public final Integer code;
   public final String message;

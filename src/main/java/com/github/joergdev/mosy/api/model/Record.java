@@ -15,6 +15,8 @@ public class Record extends AbstractModel
   private String requestData;
   private String response;
 
+  private RecordSession recordSession;
+
   public Integer getRecordId()
   {
     return recordId;
@@ -106,6 +108,24 @@ public class Record extends AbstractModel
   public void setResponse(String response)
   {
     this.response = response;
+  }
+
+  public RecordSession getRecordSession()
+  {
+    return recordSession;
+  }
+
+  public void setRecordSession(RecordSession recordSession)
+  {
+    this.recordSession = recordSession;
+  }
+
+  @JsonIgnore
+  public Integer getRecordSessionID()
+  {
+    return recordSession == null
+        ? null
+        : recordSession.getRecordSessionID();
   }
 
   public void formatRequestResponse(Integer interfaceTypeId)
