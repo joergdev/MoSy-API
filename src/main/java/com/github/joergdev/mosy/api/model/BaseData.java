@@ -10,13 +10,15 @@ public class BaseData extends AbstractModel
   private Boolean mockActiveOnStartup;
   private Boolean mockActive;
   private Boolean routingOnNoMockData;
-  private Integer ttlMockSession;
+  private Integer ttlMockProfile;
+  private Integer ttlRecordSession;
 
   private Boolean record;
 
   private final List<Interface> interfaces = new ArrayList<>();
 
-  private Integer countMockSessions;
+  private Integer countRecordSessions;
+  private Integer countMockProfiles;
   private Integer countRecords;
 
   public Boolean getMockActiveOnStartup()
@@ -39,29 +41,9 @@ public class BaseData extends AbstractModel
     this.mockActive = mockActive;
   }
 
-  public Integer getTtlMockSession()
-  {
-    return ttlMockSession;
-  }
-
-  public void setTtlMockSession(Integer ttlMockSession)
-  {
-    this.ttlMockSession = ttlMockSession;
-  }
-
   public List<Interface> getInterfaces()
   {
     return interfaces;
-  }
-
-  public Integer getCountMockSessions()
-  {
-    return countMockSessions;
-  }
-
-  public void setCountMockSessions(Integer countMockSessions)
-  {
-    this.countMockSessions = countMockSessions;
   }
 
   public Boolean getRecord()
@@ -92,5 +74,69 @@ public class BaseData extends AbstractModel
   public void setCountRecords(Integer countRecords)
   {
     this.countRecords = countRecords;
+  }
+
+  /**
+   * @return the countRecordSessions
+   */
+  public Integer getCountRecordSessions()
+  {
+    return countRecordSessions;
+  }
+
+  /**
+   * @param countRecordSessions the countRecordSessions to set
+   */
+  public void setCountRecordSessions(Integer countRecordSessions)
+  {
+    this.countRecordSessions = countRecordSessions;
+  }
+
+  /**
+   * @return the countMockProfiles
+   */
+  public Integer getCountMockProfiles()
+  {
+    return countMockProfiles;
+  }
+
+  /**
+   * @param countMockProfiles the countMockProfiles to set
+   */
+  public void setCountMockProfiles(Integer countMockProfiles)
+  {
+    this.countMockProfiles = countMockProfiles;
+  }
+
+  /**
+   * @return the ttlMockProfile
+   */
+  public Integer getTtlMockProfile()
+  {
+    return ttlMockProfile;
+  }
+
+  /**
+   * @param ttlMockProfile the ttlMockProfile to set
+   */
+  public void setTtlMockProfile(Integer ttlMockProfile)
+  {
+    this.ttlMockProfile = ttlMockProfile;
+  }
+
+  /**
+   * @return the ttlRecordSession
+   */
+  public Integer getTtlRecordSession()
+  {
+    return ttlRecordSession;
+  }
+
+  /**
+   * @param ttlRecordSession the ttlRecordSession to set
+   */
+  public void setTtlRecordSession(Integer ttlRecordSession)
+  {
+    this.ttlRecordSession = ttlRecordSession;
   }
 }
