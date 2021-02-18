@@ -230,11 +230,11 @@ public class MockData extends AbstractModel implements Cloneable
   public void setRequestResponseHash()
   {
     requestHash = request == null
-        ? null
+        ? -1
         : request.hashCode();
 
     responseHash = response == null
-        ? null
+        ? -1
         : response.hashCode();
   }
 }
