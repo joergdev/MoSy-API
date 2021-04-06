@@ -2,7 +2,7 @@ package de.joergdev.mosy.api;
 
 public class APIConstants
 {
-  public static final String API_URL_BASE = "mosy/api/v_2_0/";
+  public static final String API_URL_BASE = "mosy/api/v_2_1/";
 
   public static final String SUBSYSTEM_PERSISTENCE = "SUBSYSTEM_PERSISTENCE";
 

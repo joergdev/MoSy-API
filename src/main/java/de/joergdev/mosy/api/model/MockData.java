@@ -10,6 +10,9 @@ import de.joergdev.mosy.shared.Utils;
 
 public class MockData extends AbstractModel implements Cloneable
 {
+  public static final String PREFIX_MOCKDATA_IN_EXPORT_REQUEST = ">>>>>>REQUEST>";
+  public static final String PREFIX_MOCKDATA_IN_EXPORT_RESPONSE = ">>>>>>RESPONSE>";
+
   private Integer mockDataId;
   private String title;
 
@@ -236,5 +239,52 @@ public class MockData extends AbstractModel implements Cloneable
     responseHash = response == null
         ? -1
         : response.hashCode();
+  }
+
+  public void setRequestResponseByFileContent(String fileContent)
+  {
+    // Get Request/Response from file
+    int idxStartRequest = getFileIndexPrefixRequestResponse(fileContent, PREFIX_MOCKDATA_IN_EXPORT_REQUEST,
+        "mockdata_file_invalid_no_prefix_request");
+    int idxStartResponse = getFileIndexPrefixRequestResponse(fileContent, PREFIX_MOCKDATA_IN_EXPORT_RESPONSE,
+        "mockdata_file_invalid_no_prefix_response");
+
+    String request = getRequestResponseFromFileContent(fileContent, PREFIX_MOCKDATA_IN_EXPORT_REQUEST,
+        idxStartRequest, idxStartResponse);
+    String response = getRequestResponseFromFileContent(fileContent, PREFIX_MOCKDATA_IN_EXPORT_RESPONSE,
+        idxStartResponse, fileContent.length());
+
+    setRequest(request);
+    setResponse(response);
+  }
+
+  private String getRequestResponseFromFileContent(String fileContent, String prefix, int idxPrefix,
+                                                   int idxEnd)
+  {
+    String reqResp = fileContent.substring(idxPrefix + prefix.length(), idxEnd).trim();
+
+    if (reqResp.startsWith("\n"))
+    {
+      reqResp = reqResp.substring(1);
+    }
+
+    if (reqResp.endsWith("\n"))
+    {
+      reqResp = reqResp.substring(0, reqResp.length() - 1);
+    }
+
+    return reqResp;
+  }
+
+  private int getFileIndexPrefixRequestResponse(String fileContent, String prefix, String errorMsgDetail)
+  {
+    int idxStartRequest = fileContent.indexOf(prefix);
+
+    if (idxStartRequest < 0)
+    {
+      throw new IndexOutOfBoundsException("mockdata file invalid, idxStartRequest < 0");
+    }
+
+    return idxStartRequest;
   }
 }
