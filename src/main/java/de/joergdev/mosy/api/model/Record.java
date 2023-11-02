@@ -1,6 +1,8 @@
 package de.joergdev.mosy.api.model;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.joergdev.mosy.api.model.core.AbstractModel;
@@ -12,8 +14,14 @@ public class Record extends AbstractModel
   private InterfaceMethod interfaceMethod;
   private Date created;
 
+  /** REST see also Javadoc class {@link MockData} */
+  private final Collection<PathParam> pathParams = new ArrayList<>();
+
   private String requestData;
   private String response;
+
+  /** REST */
+  private Integer httpReturnCode;
 
   private RecordSession recordSession;
 
@@ -128,13 +136,44 @@ public class Record extends AbstractModel
         : recordSession.getRecordSessionID();
   }
 
+  public Integer getHttpReturnCode()
+  {
+    return httpReturnCode;
+  }
+
+  public void setHttpReturnCode(Integer httpReturnCode)
+  {
+    this.httpReturnCode = httpReturnCode;
+  }
+
+  public Collection<PathParam> getPathParams()
+  {
+    return pathParams;
+  }
+
   public void formatRequestResponse(Integer interfaceTypeId)
   {
-    // XML
-    if (InterfaceType.SOAP.id.equals(interfaceTypeId) || InterfaceType.CUSTOM_XML.id.equals(interfaceTypeId))
+    boolean isXmlInterface = InterfaceType.SOAP.id.equals(interfaceTypeId)
+                             || InterfaceType.CUSTOM_XML.id.equals(interfaceTypeId);
+    boolean isJsonInterface = InterfaceType.CUSTOM_JSON.equals(interfaceTypeId);
+
+    if (isXmlInterface || (requestData != null && requestData.startsWith("<?xml")))
     {
       requestData = Utils.formatXml(requestData);
+    }
+    else if (isJsonInterface
+             || (requestData != null && requestData.startsWith("{") && requestData.endsWith("}")))
+    {
+      requestData = Utils.formatJSON(requestData, true);
+    }
+
+    if (isXmlInterface || (response != null && response.startsWith("<?xml")))
+    {
       response = Utils.formatXml(response);
+    }
+    else if (isJsonInterface || (response != null && response.startsWith("{") && response.endsWith("}")))
+    {
+      response = Utils.formatJSON(response, true);
     }
   }
 }

@@ -90,10 +90,18 @@ public class RecordConfig extends AbstractModel implements Cloneable
 
   public void formatRequest(Integer interfaceTypeId)
   {
-    // XML
-    if (InterfaceType.SOAP.id.equals(interfaceTypeId) || InterfaceType.CUSTOM_XML.id.equals(interfaceTypeId))
+    boolean isXmlInterface = InterfaceType.SOAP.id.equals(interfaceTypeId)
+                             || InterfaceType.CUSTOM_XML.id.equals(interfaceTypeId);
+    boolean isJsonInterface = InterfaceType.CUSTOM_JSON.equals(interfaceTypeId);
+
+    if (isXmlInterface || (requestData != null && requestData.startsWith("<?xml")))
     {
       requestData = Utils.formatXml(requestData);
+    }
+    else if (isJsonInterface
+             || (requestData != null && requestData.startsWith("{") && requestData.endsWith("}")))
+    {
+      requestData = Utils.formatJSON(requestData, true);
     }
   }
 }

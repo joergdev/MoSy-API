@@ -11,6 +11,9 @@ public class InterfaceMethod extends AbstractModel implements Cloneable
   private String name;
   private String servicePath;
 
+  /** HttpMethod for rest services */
+  private HttpMethod httpMethod;
+
   private Boolean routingOnNoMockData;
   private Boolean mockActiveOnStartup;
   private Boolean mockActive;
@@ -190,6 +193,16 @@ public class InterfaceMethod extends AbstractModel implements Cloneable
   public void setMockActive(Boolean mockActive)
   {
     this.mockActive = mockActive;
+  }
+
+  public HttpMethod getHttpMethod()
+  {
+    return httpMethod;
+  }
+
+  public void setHttpMethod(HttpMethod httpMethod)
+  {
+    this.httpMethod = httpMethod;
   }
 
   @Override
