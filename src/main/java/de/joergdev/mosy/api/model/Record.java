@@ -16,6 +16,9 @@ public class Record extends AbstractModel
 
   /** REST see also Javadoc class {@link MockData} */
   private final Collection<PathParam> pathParams = new ArrayList<>();
+  
+  /** REST see also Javadoc class {@link MockData} */
+  private final Collection<UrlArgument> urlArguments = new ArrayList<>();
 
   private String requestData;
   private String response;
@@ -149,6 +152,11 @@ public class Record extends AbstractModel
   public Collection<PathParam> getPathParams()
   {
     return pathParams;
+  }
+
+  public Collection<UrlArgument> getUrlArguments()
+  {
+    return urlArguments;
   }
 
   public void formatRequestResponse(Integer interfaceTypeId)

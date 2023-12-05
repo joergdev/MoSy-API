@@ -12,6 +12,7 @@ import de.joergdev.mosy.shared.Utils;
 public class MockData extends AbstractModel implements Cloneable
 {
   public static final String PREFIX_MOCKDATA_IN_EXPORT_REQUEST_PATH_PARAMS = ">>>>>>PathParams>";
+  public static final String PREFIX_MOCKDATA_IN_EXPORT_REQUEST_URL_ARGUMENTS = ">>>>>>UrlArguments>";
   public static final String PREFIX_MOCKDATA_IN_EXPORT_REQUEST = ">>>>>>REQUEST>";
   public static final String PREFIX_MOCKDATA_IN_EXPORT_RESPONSE_HTTP_CODE = ">>>>>>RESPONSE_HTTP_CODE>";
   public static final String PREFIX_MOCKDATA_IN_EXPORT_RESPONSE = ">>>>>>RESPONSE>";
@@ -42,10 +43,23 @@ public class MockData extends AbstractModel implements Cloneable
    * for example:
    * Base URL: .../api/{id}/resources/{name}
    * Real URL: .../api/123/resources/ABC
-   * Collection: [ <id, 123> <name, ABC> ]
+   * List: [ <id, 123> <name, ABC> ]
    * </pre>
    */
   private List<PathParam> pathParams = new ArrayList<>();
+
+  /**
+   * <pre>
+   * REST
+   * 
+   * URL arguments, key/value
+   * 
+   * for example:
+   * URL: .../api/123/resources/ABC?stage=TEST&foo=bar
+   * List: [ <stage, TEST> <foo, bar> ]
+   * </pre>
+   */
+  private List<UrlArgument> urlArguments = new ArrayList<>();
 
   private String request;
   private String response;
@@ -245,6 +259,9 @@ public class MockData extends AbstractModel implements Cloneable
       clone.pathParams = new ArrayList<>();
       pathParams.forEach(pp -> clone.pathParams.add(pp.clone()));
 
+      clone.urlArguments = new ArrayList<>();
+      urlArguments.forEach(ua -> clone.urlArguments.add(ua.clone()));
+
       return clone;
     }
     catch (CloneNotSupportedException ex)
@@ -280,7 +297,7 @@ public class MockData extends AbstractModel implements Cloneable
 
   public void setRequestResponseHash()
   {
-    requestHash = Objects.hash(request, pathParams);
+    requestHash = Objects.hash(request, pathParams, urlArguments);
 
     responseHash = Objects.hash(response, httpReturnCode);
   }
@@ -290,17 +307,26 @@ public class MockData extends AbstractModel implements Cloneable
     // Get Request/Response from file
     int idxStartRequestDynPathVar = getFileIndexPrefixRequestResponse(fileContent,
         PREFIX_MOCKDATA_IN_EXPORT_REQUEST_PATH_PARAMS, null);
+
+    int idxStartRequestUrlArguments = getFileIndexPrefixRequestResponse(fileContent,
+        PREFIX_MOCKDATA_IN_EXPORT_REQUEST_URL_ARGUMENTS, null);
+
     int idxStartRequest = getFileIndexPrefixRequestResponse(fileContent, PREFIX_MOCKDATA_IN_EXPORT_REQUEST,
         "mockdata_file_invalid_no_prefix_request");
+
     int idxStartResponseHttpCode = getFileIndexPrefixRequestResponse(fileContent,
         PREFIX_MOCKDATA_IN_EXPORT_RESPONSE_HTTP_CODE, null);
+
     int idxStartResponse = getFileIndexPrefixRequestResponse(fileContent, PREFIX_MOCKDATA_IN_EXPORT_RESPONSE,
         "mockdata_file_invalid_no_prefix_response");
 
     if (idxStartRequestDynPathVar >= 0)
     {
       String pathParamsFile = getRequestResponseFromFileContent(fileContent,
-          PREFIX_MOCKDATA_IN_EXPORT_REQUEST_PATH_PARAMS, idxStartRequestDynPathVar, idxStartRequest);
+          PREFIX_MOCKDATA_IN_EXPORT_REQUEST_PATH_PARAMS, idxStartRequestDynPathVar,
+          idxStartRequestUrlArguments > 0
+              ? idxStartRequestUrlArguments
+              : idxStartRequest);
 
       for (String pathParamLine : pathParamsFile.split("\n"))
       {
@@ -308,6 +334,21 @@ public class MockData extends AbstractModel implements Cloneable
         {
           String[] pathParamNameValuePair = pathParamLine.split(":");
           pathParams.add(new PathParam(pathParamNameValuePair[0].trim(), pathParamNameValuePair[1].trim()));
+        }
+      }
+    }
+
+    if (idxStartRequestUrlArguments >= 0)
+    {
+      String urlArgsFile = getRequestResponseFromFileContent(fileContent,
+          PREFIX_MOCKDATA_IN_EXPORT_REQUEST_URL_ARGUMENTS, idxStartRequestUrlArguments, idxStartRequest);
+
+      for (String urlArgLine : urlArgsFile.split("\n"))
+      {
+        if (!urlArgLine.trim().isEmpty() && urlArgLine.contains(":"))
+        {
+          String[] urlArgNameValuePair = urlArgLine.split(":");
+          urlArguments.add(new UrlArgument(urlArgNameValuePair[0].trim(), urlArgNameValuePair[1].trim()));
         }
       }
     }
@@ -364,5 +405,10 @@ public class MockData extends AbstractModel implements Cloneable
   public List<PathParam> getPathParams()
   {
     return pathParams;
+  }
+
+  public List<UrlArgument> getUrlArguments()
+  {
+    return urlArguments;
   }
 }
