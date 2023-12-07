@@ -70,6 +70,9 @@ public class MockData extends AbstractModel implements Cloneable
   private Integer requestHash;
   private Integer responseHash;
 
+  /** Optional delay time for mockdata (ms) */
+  private Long delay;
+
   private List<MockProfile> mockProfiles = new ArrayList<>();
 
   public Integer getMockDataId()
@@ -299,7 +302,7 @@ public class MockData extends AbstractModel implements Cloneable
   {
     requestHash = Objects.hash(request, pathParams, urlArguments);
 
-    responseHash = Objects.hash(response, httpReturnCode);
+    responseHash = Objects.hash(response, httpReturnCode, delay);
   }
 
   public void setRequestResponseByFileContent(String fileContent)
@@ -410,5 +413,15 @@ public class MockData extends AbstractModel implements Cloneable
   public List<UrlArgument> getUrlArguments()
   {
     return urlArguments;
+  }
+
+  public Long getDelay()
+  {
+    return delay;
+  }
+
+  public void setDelay(Long delay)
+  {
+    this.delay = delay;
   }
 }
