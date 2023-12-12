@@ -4,13 +4,17 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.joergdev.mosy.api.model.core.AbstractModel;
 import de.joergdev.mosy.shared.Utils;
 
 public class MockData extends AbstractModel implements Cloneable
 {
+  public static final String PREFIX_MOCKDATA_IN_EXPORT_REQUEST_PATH_PARAMS = ">>>>>>PathParams>";
+  public static final String PREFIX_MOCKDATA_IN_EXPORT_REQUEST_URL_ARGUMENTS = ">>>>>>UrlArguments>";
   public static final String PREFIX_MOCKDATA_IN_EXPORT_REQUEST = ">>>>>>REQUEST>";
+  public static final String PREFIX_MOCKDATA_IN_EXPORT_RESPONSE_HTTP_CODE = ">>>>>>RESPONSE_HTTP_CODE>";
   public static final String PREFIX_MOCKDATA_IN_EXPORT_RESPONSE = ">>>>>>RESPONSE>";
 
   private Integer mockDataId;
@@ -30,11 +34,44 @@ public class MockData extends AbstractModel implements Cloneable
 
   private InterfaceMethod interfaceMethod;
 
+  /**
+   * <pre> 
+   * REST 
+   * 
+   * Path params, key/value
+   * 
+   * for example:
+   * Base URL: .../api/{id}/resources/{name}
+   * Real URL: .../api/123/resources/ABC
+   * List: [ <id, 123> <name, ABC> ]
+   * </pre>
+   */
+  private List<PathParam> pathParams = new ArrayList<>();
+
+  /**
+   * <pre>
+   * REST
+   * 
+   * URL arguments, key/value
+   * 
+   * for example:
+   * URL: .../api/123/resources/ABC?stage=TEST&foo=bar
+   * List: [ <stage, TEST> <foo, bar> ]
+   * </pre>
+   */
+  private List<UrlArgument> urlArguments = new ArrayList<>();
+
   private String request;
   private String response;
 
+  /** Nur bei Rest relevant */
+  private Integer httpReturnCode;
+
   private Integer requestHash;
   private Integer responseHash;
+
+  /** Optional delay time for mockdata (ms) */
+  private Long delay;
 
   private List<MockProfile> mockProfiles = new ArrayList<>();
 
@@ -195,6 +232,16 @@ public class MockData extends AbstractModel implements Cloneable
     this.responseHash = responseHash;
   }
 
+  public Integer getHttpReturnCode()
+  {
+    return httpReturnCode;
+  }
+
+  public void setHttpReturnCode(Integer httpReturnCode)
+  {
+    this.httpReturnCode = httpReturnCode;
+  }
+
   /**
    * @return the mockProfiles
    */
@@ -212,6 +259,12 @@ public class MockData extends AbstractModel implements Cloneable
       clone.mockProfiles = new ArrayList<>();
       mockProfiles.forEach(mp -> clone.mockProfiles.add(mp.clone()));
 
+      clone.pathParams = new ArrayList<>();
+      pathParams.forEach(pp -> clone.pathParams.add(pp.clone()));
+
+      clone.urlArguments = new ArrayList<>();
+      urlArguments.forEach(ua -> clone.urlArguments.add(ua.clone()));
+
       return clone;
     }
     catch (CloneNotSupportedException ex)
@@ -222,35 +275,99 @@ public class MockData extends AbstractModel implements Cloneable
 
   public void formatRequestResponse(Integer interfaceTypeId)
   {
-    // XML
-    if (InterfaceType.SOAP.id.equals(interfaceTypeId) || InterfaceType.CUSTOM_XML.id.equals(interfaceTypeId))
+    boolean isXmlInterface = InterfaceType.SOAP.id.equals(interfaceTypeId)
+                             || InterfaceType.CUSTOM_XML.id.equals(interfaceTypeId);
+    boolean isJsonInterface = InterfaceType.CUSTOM_JSON.equals(interfaceTypeId);
+
+    if (isXmlInterface || (request != null && request.startsWith("<?xml")))
     {
       request = Utils.formatXml(request);
+    }
+    else if (isJsonInterface || (request != null && request.startsWith("{") && request.endsWith("}")))
+    {
+      request = Utils.formatJSON(request, true);
+    }
+
+    if (isXmlInterface || (response != null && response.startsWith("<?xml")))
+    {
       response = Utils.formatXml(response);
+    }
+    else if (isJsonInterface || (response != null && response.startsWith("{") && response.endsWith("}")))
+    {
+      response = Utils.formatJSON(response, true);
     }
   }
 
   public void setRequestResponseHash()
   {
-    requestHash = request == null
-        ? -1
-        : request.hashCode();
+    requestHash = Objects.hash(request, pathParams, urlArguments);
 
-    responseHash = response == null
-        ? -1
-        : response.hashCode();
+    responseHash = Objects.hash(response, httpReturnCode, delay);
   }
 
   public void setRequestResponseByFileContent(String fileContent)
   {
     // Get Request/Response from file
+    int idxStartRequestDynPathVar = getFileIndexPrefixRequestResponse(fileContent,
+        PREFIX_MOCKDATA_IN_EXPORT_REQUEST_PATH_PARAMS, null);
+
+    int idxStartRequestUrlArguments = getFileIndexPrefixRequestResponse(fileContent,
+        PREFIX_MOCKDATA_IN_EXPORT_REQUEST_URL_ARGUMENTS, null);
+
     int idxStartRequest = getFileIndexPrefixRequestResponse(fileContent, PREFIX_MOCKDATA_IN_EXPORT_REQUEST,
         "mockdata_file_invalid_no_prefix_request");
+
+    int idxStartResponseHttpCode = getFileIndexPrefixRequestResponse(fileContent,
+        PREFIX_MOCKDATA_IN_EXPORT_RESPONSE_HTTP_CODE, null);
+
     int idxStartResponse = getFileIndexPrefixRequestResponse(fileContent, PREFIX_MOCKDATA_IN_EXPORT_RESPONSE,
         "mockdata_file_invalid_no_prefix_response");
 
+    if (idxStartRequestDynPathVar >= 0)
+    {
+      String pathParamsFile = getRequestResponseFromFileContent(fileContent,
+          PREFIX_MOCKDATA_IN_EXPORT_REQUEST_PATH_PARAMS, idxStartRequestDynPathVar,
+          idxStartRequestUrlArguments > 0
+              ? idxStartRequestUrlArguments
+              : idxStartRequest);
+
+      for (String pathParamLine : pathParamsFile.split("\n"))
+      {
+        if (!pathParamLine.trim().isEmpty() && pathParamLine.contains(":"))
+        {
+          String[] pathParamNameValuePair = pathParamLine.split(":");
+          pathParams.add(new PathParam(pathParamNameValuePair[0].trim(), pathParamNameValuePair[1].trim()));
+        }
+      }
+    }
+
+    if (idxStartRequestUrlArguments >= 0)
+    {
+      String urlArgsFile = getRequestResponseFromFileContent(fileContent,
+          PREFIX_MOCKDATA_IN_EXPORT_REQUEST_URL_ARGUMENTS, idxStartRequestUrlArguments, idxStartRequest);
+
+      for (String urlArgLine : urlArgsFile.split("\n"))
+      {
+        if (!urlArgLine.trim().isEmpty() && urlArgLine.contains(":"))
+        {
+          String[] urlArgNameValuePair = urlArgLine.split(":");
+          urlArguments.add(new UrlArgument(urlArgNameValuePair[0].trim(), urlArgNameValuePair[1].trim()));
+        }
+      }
+    }
+
     String request = getRequestResponseFromFileContent(fileContent, PREFIX_MOCKDATA_IN_EXPORT_REQUEST,
-        idxStartRequest, idxStartResponse);
+        idxStartRequest, (idxStartResponseHttpCode >= 0
+            ? idxStartResponseHttpCode
+            : idxStartResponse));
+
+    if (idxStartResponseHttpCode >= 0)
+    {
+      String responseHttpCode = getRequestResponseFromFileContent(fileContent,
+          PREFIX_MOCKDATA_IN_EXPORT_RESPONSE_HTTP_CODE, idxStartResponseHttpCode, idxStartResponse);
+      setHttpReturnCode(Integer.valueOf(responseHttpCode));
+    }
+
     String response = getRequestResponseFromFileContent(fileContent, PREFIX_MOCKDATA_IN_EXPORT_RESPONSE,
         idxStartResponse, fileContent.length());
 
@@ -280,11 +397,31 @@ public class MockData extends AbstractModel implements Cloneable
   {
     int idxStartRequest = fileContent.indexOf(prefix);
 
-    if (idxStartRequest < 0)
+    if (idxStartRequest < 0 && errorMsgDetail != null)
     {
       throw new IndexOutOfBoundsException("mockdata file invalid, idxStartRequest < 0");
     }
 
     return idxStartRequest;
+  }
+
+  public List<PathParam> getPathParams()
+  {
+    return pathParams;
+  }
+
+  public List<UrlArgument> getUrlArguments()
+  {
+    return urlArguments;
+  }
+
+  public Long getDelay()
+  {
+    return delay;
+  }
+
+  public void setDelay(Long delay)
+  {
+    this.delay = delay;
   }
 }

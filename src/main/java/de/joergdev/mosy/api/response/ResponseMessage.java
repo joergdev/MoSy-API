@@ -3,6 +3,7 @@ package de.joergdev.mosy.api.response;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -96,6 +97,31 @@ public class ResponseMessage
     }
 
     return bui.toString();
+  }
+
+  @Override
+  public int hashCode()
+  {
+    return Objects.hash(additionalInfos, responseCode);
+  }
+
+  @Override
+  public boolean equals(Object obj)
+  {
+    if (this == obj)
+    {
+      return true;
+    }
+
+    if (obj instanceof ResponseMessage == false)
+    {
+      return false;
+    }
+
+    ResponseMessage other = (ResponseMessage) obj;
+
+    return Objects.equals(additionalInfos, other.additionalInfos) //
+           && responseCode == other.responseCode;
   }
 
   @Override
