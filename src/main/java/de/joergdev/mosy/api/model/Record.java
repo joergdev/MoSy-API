@@ -4,7 +4,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import de.joergdev.mosy.api.APIConstants;
 import de.joergdev.mosy.api.model.core.AbstractModel;
 import de.joergdev.mosy.shared.Utils;
 
@@ -12,11 +14,22 @@ public class Record extends AbstractModel
 {
   private Integer recordId;
   private InterfaceMethod interfaceMethod;
+
+  /**
+   * Date of creation.
+   * 
+   * Cause of problems with json parsing as LocalDateTime "created" is instanceof Date.
+   * For handling as LocalDateTime though there exists a separate getter/setter.
+   * 
+   * Format must be set cause of problems running in JBoss EAP 7.4.
+   * (Cannot deserialize value of type `java.util.Date` from String "2024-04-30T05:11:18.304Z[UTC]": not a valid representation)
+   */
+  @JsonFormat(pattern = APIConstants.DATE_TIME_PATTNER)
   private Date created;
 
   /** REST see also Javadoc class {@link MockData} */
   private final Collection<PathParam> pathParams = new ArrayList<>();
-  
+
   /** REST see also Javadoc class {@link MockData} */
   private final Collection<UrlArgument> urlArguments = new ArrayList<>();
 
@@ -134,9 +147,7 @@ public class Record extends AbstractModel
   @JsonIgnore
   public Integer getRecordSessionID()
   {
-    return recordSession == null
-        ? null
-        : recordSession.getRecordSessionID();
+    return recordSession == null ? null : recordSession.getRecordSessionID();
   }
 
   public Integer getHttpReturnCode()
@@ -161,16 +172,14 @@ public class Record extends AbstractModel
 
   public void formatRequestResponse(Integer interfaceTypeId)
   {
-    boolean isXmlInterface = InterfaceType.SOAP.id.equals(interfaceTypeId)
-                             || InterfaceType.CUSTOM_XML.id.equals(interfaceTypeId);
+    boolean isXmlInterface = InterfaceType.SOAP.id.equals(interfaceTypeId) || InterfaceType.CUSTOM_XML.id.equals(interfaceTypeId);
     boolean isJsonInterface = InterfaceType.CUSTOM_JSON.equals(interfaceTypeId);
 
     if (isXmlInterface || (requestData != null && requestData.startsWith("<?xml")))
     {
       requestData = Utils.formatXml(requestData);
     }
-    else if (isJsonInterface
-             || (requestData != null && requestData.startsWith("{") && requestData.endsWith("}")))
+    else if (isJsonInterface || (requestData != null && requestData.startsWith("{") && requestData.endsWith("}")))
     {
       requestData = Utils.formatJSON(requestData, true);
     }

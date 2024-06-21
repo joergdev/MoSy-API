@@ -9,4 +9,6 @@ public class APIConstants
   public static final String HTTP_HEADER_MOCK_PROFILE_NAME = "HTTP_HEADER_MOCK_PROFILE_NAME";
 
   public static final String HTTP_HEADER_RECORD_SESSION_ID = "HTTP_HEADER_RECORD_SESSION_ID";
+
+  public static final String DATE_TIME_PATTNER = "yyyy-MM-dd'T'HH:mm:ss.SSSX";
 }

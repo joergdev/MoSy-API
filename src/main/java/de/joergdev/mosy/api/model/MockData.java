@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import de.joergdev.mosy.api.APIConstants;
 import de.joergdev.mosy.api.model.core.AbstractModel;
 import de.joergdev.mosy.shared.Utils;
 
@@ -25,7 +27,11 @@ public class MockData extends AbstractModel implements Cloneable
    * 
    * Cause of problems with json parsing as LocalDateTime "created" is instanceof Date.
    * For handling as LocalDateTime though there exists a separate getter/setter.
+   * 
+   * Format must be set cause of problems running in JBoss EAP 7.4.
+   * (Cannot deserialize value of type `java.util.Date` from String "2024-04-30T05:11:18.304Z[UTC]": not a valid representation)
    */
+  @JsonFormat(pattern = APIConstants.DATE_TIME_PATTNER)
   private Date created;
 
   private boolean active;
@@ -250,6 +256,7 @@ public class MockData extends AbstractModel implements Cloneable
     return mockProfiles;
   }
 
+  @Override
   public MockData clone()
   {
     try
@@ -275,8 +282,7 @@ public class MockData extends AbstractModel implements Cloneable
 
   public void formatRequestResponse(Integer interfaceTypeId)
   {
-    boolean isXmlInterface = InterfaceType.SOAP.id.equals(interfaceTypeId)
-                             || InterfaceType.CUSTOM_XML.id.equals(interfaceTypeId);
+    boolean isXmlInterface = InterfaceType.SOAP.id.equals(interfaceTypeId) || InterfaceType.CUSTOM_XML.id.equals(interfaceTypeId);
     boolean isJsonInterface = InterfaceType.CUSTOM_JSON.equals(interfaceTypeId);
 
     if (isXmlInterface || (request != null && request.startsWith("<?xml")))
@@ -308,28 +314,20 @@ public class MockData extends AbstractModel implements Cloneable
   public void setRequestResponseByFileContent(String fileContent)
   {
     // Get Request/Response from file
-    int idxStartRequestDynPathVar = getFileIndexPrefixRequestResponse(fileContent,
-        PREFIX_MOCKDATA_IN_EXPORT_REQUEST_PATH_PARAMS, null);
+    int idxStartRequestDynPathVar = getFileIndexPrefixRequestResponse(fileContent, PREFIX_MOCKDATA_IN_EXPORT_REQUEST_PATH_PARAMS, null);
 
-    int idxStartRequestUrlArguments = getFileIndexPrefixRequestResponse(fileContent,
-        PREFIX_MOCKDATA_IN_EXPORT_REQUEST_URL_ARGUMENTS, null);
+    int idxStartRequestUrlArguments = getFileIndexPrefixRequestResponse(fileContent, PREFIX_MOCKDATA_IN_EXPORT_REQUEST_URL_ARGUMENTS, null);
 
-    int idxStartRequest = getFileIndexPrefixRequestResponse(fileContent, PREFIX_MOCKDATA_IN_EXPORT_REQUEST,
-        "mockdata_file_invalid_no_prefix_request");
+    int idxStartRequest = getFileIndexPrefixRequestResponse(fileContent, PREFIX_MOCKDATA_IN_EXPORT_REQUEST, "mockdata_file_invalid_no_prefix_request");
 
-    int idxStartResponseHttpCode = getFileIndexPrefixRequestResponse(fileContent,
-        PREFIX_MOCKDATA_IN_EXPORT_RESPONSE_HTTP_CODE, null);
+    int idxStartResponseHttpCode = getFileIndexPrefixRequestResponse(fileContent, PREFIX_MOCKDATA_IN_EXPORT_RESPONSE_HTTP_CODE, null);
 
-    int idxStartResponse = getFileIndexPrefixRequestResponse(fileContent, PREFIX_MOCKDATA_IN_EXPORT_RESPONSE,
-        "mockdata_file_invalid_no_prefix_response");
+    int idxStartResponse = getFileIndexPrefixRequestResponse(fileContent, PREFIX_MOCKDATA_IN_EXPORT_RESPONSE, "mockdata_file_invalid_no_prefix_response");
 
     if (idxStartRequestDynPathVar >= 0)
     {
-      String pathParamsFile = getRequestResponseFromFileContent(fileContent,
-          PREFIX_MOCKDATA_IN_EXPORT_REQUEST_PATH_PARAMS, idxStartRequestDynPathVar,
-          idxStartRequestUrlArguments > 0
-              ? idxStartRequestUrlArguments
-              : idxStartRequest);
+      String pathParamsFile = getRequestResponseFromFileContent(fileContent, PREFIX_MOCKDATA_IN_EXPORT_REQUEST_PATH_PARAMS, idxStartRequestDynPathVar,
+          idxStartRequestUrlArguments > 0 ? idxStartRequestUrlArguments : idxStartRequest);
 
       for (String pathParamLine : pathParamsFile.split("\n"))
       {
@@ -343,8 +341,8 @@ public class MockData extends AbstractModel implements Cloneable
 
     if (idxStartRequestUrlArguments >= 0)
     {
-      String urlArgsFile = getRequestResponseFromFileContent(fileContent,
-          PREFIX_MOCKDATA_IN_EXPORT_REQUEST_URL_ARGUMENTS, idxStartRequestUrlArguments, idxStartRequest);
+      String urlArgsFile = getRequestResponseFromFileContent(fileContent, PREFIX_MOCKDATA_IN_EXPORT_REQUEST_URL_ARGUMENTS, idxStartRequestUrlArguments,
+          idxStartRequest);
 
       for (String urlArgLine : urlArgsFile.split("\n"))
       {
@@ -356,27 +354,23 @@ public class MockData extends AbstractModel implements Cloneable
       }
     }
 
-    String request = getRequestResponseFromFileContent(fileContent, PREFIX_MOCKDATA_IN_EXPORT_REQUEST,
-        idxStartRequest, (idxStartResponseHttpCode >= 0
-            ? idxStartResponseHttpCode
-            : idxStartResponse));
+    String request = getRequestResponseFromFileContent(fileContent, PREFIX_MOCKDATA_IN_EXPORT_REQUEST, idxStartRequest,
+        (idxStartResponseHttpCode >= 0 ? idxStartResponseHttpCode : idxStartResponse));
 
     if (idxStartResponseHttpCode >= 0)
     {
-      String responseHttpCode = getRequestResponseFromFileContent(fileContent,
-          PREFIX_MOCKDATA_IN_EXPORT_RESPONSE_HTTP_CODE, idxStartResponseHttpCode, idxStartResponse);
+      String responseHttpCode = getRequestResponseFromFileContent(fileContent, PREFIX_MOCKDATA_IN_EXPORT_RESPONSE_HTTP_CODE, idxStartResponseHttpCode,
+          idxStartResponse);
       setHttpReturnCode(Integer.valueOf(responseHttpCode));
     }
 
-    String response = getRequestResponseFromFileContent(fileContent, PREFIX_MOCKDATA_IN_EXPORT_RESPONSE,
-        idxStartResponse, fileContent.length());
+    String response = getRequestResponseFromFileContent(fileContent, PREFIX_MOCKDATA_IN_EXPORT_RESPONSE, idxStartResponse, fileContent.length());
 
     setRequest(request);
     setResponse(response);
   }
 
-  private String getRequestResponseFromFileContent(String fileContent, String prefix, int idxPrefix,
-                                                   int idxEnd)
+  private String getRequestResponseFromFileContent(String fileContent, String prefix, int idxPrefix, int idxEnd)
   {
     String reqResp = fileContent.substring(idxPrefix + prefix.length(), idxEnd).trim();
 
