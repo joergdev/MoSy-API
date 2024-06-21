@@ -137,6 +137,7 @@ public class Interface extends AbstractModel implements Cloneable
     this.mockActive = mockActive;
   }
 
+  @Override
   public Interface clone()
   {
     try
@@ -150,7 +151,7 @@ public class Interface extends AbstractModel implements Cloneable
         for (InterfaceMethod method : methods)
         {
           method = method.clone();
-          method.setMockInterface(clone);
+          method.setMockInterfaceData(clone);
 
           clone.methods.add(method);
         }
@@ -167,9 +168,7 @@ public class Interface extends AbstractModel implements Cloneable
   @Override
   public String toString()
   {
-    return name == null
-        ? super.toString()
-        : name;
+    return name == null ? super.toString() : name;
   }
 
   @Override
