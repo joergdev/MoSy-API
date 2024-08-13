@@ -24,6 +24,7 @@ public class InterfaceMethod extends AbstractModel implements Cloneable
 
   private Integer interfaceId;
   private String interfaceName;
+  private InterfaceType interfaceType;
 
   private Boolean record;
 
@@ -80,7 +81,7 @@ public class InterfaceMethod extends AbstractModel implements Cloneable
   {
     if (mockInterface != null)
     {
-      // set id and name and not the interface object because it results in following error running in JBOSS even
+      // set id, name and type and not the interface object because it results in following error running in JBOSS even
       // if a new Interfac object is created with only id+name.
       // Error Unexpected error occured. RESTEASY004655: Unable to invoke request: javax.ws.rs.ProcessingException: 
       // RESTEASY008205: JSON Binding serialization error javax.json.bind.JsonbException:
@@ -88,11 +89,13 @@ public class InterfaceMethod extends AbstractModel implements Cloneable
 
       interfaceId = mockInterface.getInterfaceId();
       interfaceName = mockInterface.getName();
+      interfaceType = mockInterface.getType();
     }
     else
     {
       interfaceId = null;
       interfaceName = null;
+      interfaceType = null;
     }
   }
 
@@ -100,9 +103,15 @@ public class InterfaceMethod extends AbstractModel implements Cloneable
   @JsonbTransient
   public Interface getMockInterface()
   {
+    if (interfaceId == null && interfaceName == null && interfaceType == null)
+    {
+      return null;
+    }
+
     Interface blInterface = new Interface();
     blInterface.setInterfaceId(interfaceId);
     blInterface.setName(interfaceName);
+    blInterface.setType(interfaceType);
 
     return blInterface;
   }
@@ -239,6 +248,16 @@ public class InterfaceMethod extends AbstractModel implements Cloneable
   public void setInterfaceName(String interfaceName)
   {
     this.interfaceName = interfaceName;
+  }
+
+  public InterfaceType getInterfaceType()
+  {
+    return interfaceType;
+  }
+
+  public void setInterfaceType(InterfaceType interfaceType)
+  {
+    this.interfaceType = interfaceType;
   }
 
   @Override
