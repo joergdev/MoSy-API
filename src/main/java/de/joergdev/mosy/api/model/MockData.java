@@ -306,9 +306,32 @@ public class MockData extends AbstractModel implements Cloneable
 
   public void setRequestResponseHash()
   {
-    requestHash = Objects.hash(request, pathParams, urlArguments);
+    requestHash = Objects.hash(formatStringForHash(request), pathParams, urlArguments);
 
-    responseHash = Objects.hash(response, httpReturnCode, delay);
+    responseHash = Objects.hash(formatStringForHash(response), httpReturnCode, delay);
+  }
+
+  private String formatStringForHash(String str)
+  {
+    if (str == null)
+    {
+      return null;
+    }
+
+    str = str.replace("\t", "");
+    str = str.replace("\r", "");
+
+    StringBuilder cleanedOutput = new StringBuilder();
+    for (String line : str.split("\n"))
+    {
+      line = line.trim();
+      if (!line.isEmpty())
+      {
+        cleanedOutput.append(line);
+      }
+    }
+
+    return cleanedOutput.toString();
   }
 
   public void setRequestResponseByFileContent(String fileContent)
