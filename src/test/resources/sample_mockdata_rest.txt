@@ -1,0 +1,11 @@
+>>>>>>PathParams>
+id:0a00143c-9102-107e-8191-037ff27600eb
+>>>>>>REQUEST>
+
+>>>>>>RESPONSE_HTTP_CODE>
+200
+>>>>>>RESPONSE>
+{
+  "creationDate" : "2024-07-30T13:56:42.512157",
+  "description" : "HelloWorld123"
+}
