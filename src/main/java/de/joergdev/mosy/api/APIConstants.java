@@ -2,7 +2,7 @@ package de.joergdev.mosy.api;
 
 public class APIConstants
 {
-  public static final String API_URL_BASE = "mosy/api/v_4_0/";
+  public static final String API_URL_BASE = "mosy/api/v_5_0/";
 
   public static final String HTTP_HEADER_TENANT_ID = "HTTP_HEADER_TENANT_ID";
 
