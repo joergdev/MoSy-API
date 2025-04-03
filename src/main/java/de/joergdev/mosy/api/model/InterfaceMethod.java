@@ -2,7 +2,7 @@ package de.joergdev.mosy.api.model;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.json.bind.annotation.JsonbTransient;
+import jakarta.json.bind.annotation.JsonbTransient;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.joergdev.mosy.api.model.core.AbstractModel;
 import de.joergdev.mosy.shared.Utils;
@@ -83,8 +83,8 @@ public class InterfaceMethod extends AbstractModel implements Cloneable
     {
       // set id, name and type and not the interface object because it results in following error running in JBOSS even
       // if a new Interfac object is created with only id+name.
-      // Error Unexpected error occured. RESTEASY004655: Unable to invoke request: javax.ws.rs.ProcessingException: 
-      // RESTEASY008205: JSON Binding serialization error javax.json.bind.JsonbException:
+      // Error Unexpected error occured. RESTEASY004655: Unable to invoke request: jakarta.ws.rs.ProcessingException: 
+      // RESTEASY008205: JSON Binding serialization error jakarta.json.bind.JsonbException:
       // Unable to serialize property 'methods' from de.joergdev.mosy.api.model.Interface
 
       interfaceId = mockInterface.getInterfaceId();
